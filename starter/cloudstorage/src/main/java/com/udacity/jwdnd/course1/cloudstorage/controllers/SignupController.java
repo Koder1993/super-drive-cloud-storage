@@ -25,6 +25,7 @@ public class SignupController {
 
     @PostMapping
     public String signupRequest(User user, Model model) {
+        System.out.println("user details: " + user);
         String signupError = null;
 
         if(!userService.isUsernameValid(user)) {
