@@ -1,4 +1,4 @@
-package com.udacity.jwdnd.course1.cloudstorage.data;
+package com.udacity.jwdnd.course1.cloudstorage.entity;
 
 public class User {
     private Integer userId;
