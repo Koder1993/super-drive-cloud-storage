@@ -1,15 +1,16 @@
 package com.udacity.jwdnd.course1.cloudstorage.controllers;
 
 import com.udacity.jwdnd.course1.cloudstorage.entity.Note;
-import com.udacity.jwdnd.course1.cloudstorage.entity.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.NotesService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class NotesController {
     public String addOrUpdateNote(Note newNote, Authentication authentication, Model model) {
         Integer currentUserId = userService.getCurrentUser(authentication);
         newNote.setUserId(currentUserId);
-        boolean error = false;
+        String errorMessage = null;
         Integer currentNoteId = newNote.getNoteId();
         int rowsAdded;
         if (currentNoteId == null) {
@@ -48,15 +49,11 @@ public class NotesController {
         } else {
             rowsAdded = notesService.updateNote(newNote);
         }
-        System.out.println("add/update note: " + rowsAdded);
         if (rowsAdded < 0) {
-            error = true;
+            errorMessage = "Error: Unable to add note";
         }
-        if (error) {
-            model.addAttribute("success", false);
-        } else {
-            model.addAttribute("success", true);
-        }
+        model.addAttribute("success", errorMessage == null);
+        model.addAttribute("message", errorMessage);
         model.addAttribute("noteList", notesService.getNotesForUser(currentUserId));
         System.out.println("notes: " + notesService.getNotesForUser(currentUserId));
         return "result";
