@@ -3,6 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage.services;
 import com.udacity.jwdnd.course1.cloudstorage.entity.User;
 import com.udacity.jwdnd.course1.cloudstorage.mappers.UserMapper;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -39,5 +40,12 @@ public class UserService {
 
     public boolean isUsernameValid(User user) {
         return userMapper.getUser(user.getUsername()) == null;
+    }
+
+    @Nullable
+    public Integer getCurrentUser(Authentication authentication) {
+        String userName = authentication.getName();
+        User user = getUser(userName);
+        return user == null ? null : user.getUserId();
     }
 }
