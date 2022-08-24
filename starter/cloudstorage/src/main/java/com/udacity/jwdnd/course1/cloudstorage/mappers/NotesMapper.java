@@ -17,7 +17,7 @@ public interface NotesMapper {
     @ResultMap("notesResultMap")
     Note getNote(String userId, String noteTitle);
 
-    @Update("UPDATE NOTES SET noteTitle=#{noteTitle}, noteDescription=#{noteDescription} WHERE noteId=#{noteId}")
+    @Update("UPDATE NOTES SET noteTitle=#{noteTitle}, noteDescription=#{noteDescription} WHERE noteid=#{noteId}")
     int updateNote(Note note);
 
     @Select("SELECT * FROM NOTES WHERE userid = #{userId}")
