@@ -1,10 +1,9 @@
 package com.udacity.jwdnd.course1.cloudstorage.controllers;
 
+import com.udacity.jwdnd.course1.cloudstorage.entity.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.entity.File;
 import com.udacity.jwdnd.course1.cloudstorage.entity.Note;
-import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
-import com.udacity.jwdnd.course1.cloudstorage.services.NotesService;
-import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.services.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,11 +20,15 @@ public class HomeController {
     private final NotesService notesService;
     private final UserService userService;
     private final FileService fileService;
+    private final CredentialsService credentialsService;
+    private final EncryptionService encryptionService;
 
-    public HomeController(NotesService notesService, UserService userService, FileService fileService) {
+    public HomeController(NotesService notesService, UserService userService, FileService fileService, CredentialsService credentialsService, EncryptionService encryptionService) {
         this.notesService = notesService;
         this.userService = userService;
         this.fileService = fileService;
+        this.credentialsService = credentialsService;
+        this.encryptionService = encryptionService;
     }
 
     @GetMapping()
@@ -33,12 +36,17 @@ public class HomeController {
         Integer currentUserId = userService.getCurrentUser(authentication);
         List<Note> noteList = new ArrayList<>();
         List<File> fileList = new ArrayList<>();
+        List<Credential> credentialList = new ArrayList<>();
         if (currentUserId != null) {
             noteList = notesService.getNotesForUser(currentUserId);
             fileList = fileService.getFiles(currentUserId);
+            credentialList = credentialsService.getCredentialsListForUser(currentUserId);
         }
+        System.out.println("credentialList: " + credentialList);
         model.addAttribute("noteList", noteList);
         model.addAttribute("fileList", fileList);
+        model.addAttribute("credentialList", credentialList);
+        model.addAttribute("encryptionService", encryptionService);
         return "home";
     }
 }
