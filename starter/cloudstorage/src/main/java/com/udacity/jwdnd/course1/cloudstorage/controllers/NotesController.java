@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RequestMapping("/notes")
 @Controller
 public class NotesController {
@@ -25,17 +22,6 @@ public class NotesController {
     public NotesController(NotesService notesService, UserService userService) {
         this.notesService = notesService;
         this.userService = userService;
-    }
-
-    @GetMapping()
-    public String getNotesList(Authentication authentication, Model model) {
-        Integer currentUserId = userService.getCurrentUser(authentication);
-        List<Note> noteList = new ArrayList<>();
-        if (currentUserId != null) {
-            noteList = notesService.getNotesForUser(currentUserId);
-        }
-        model.addAttribute("notesList", noteList);
-        return "home";
     }
 
     @PostMapping()
@@ -63,9 +49,18 @@ public class NotesController {
     @GetMapping("/delete")
     public String deleteNote(@RequestParam(name = "noteId") Integer noteId, Authentication authentication, Model model) {
         Integer currentUserId = userService.getCurrentUser(authentication);
-        notesService.deleteNote(currentUserId, noteId);
+        String errorMessage = null;
+        if (notesService.getNote(currentUserId, noteId) == null) {
+            errorMessage = Constants.DELETE_NOTE_ERROR;
+        } else {
+            int rowsDeleted = notesService.deleteNote(currentUserId, noteId);
+            if (rowsDeleted < 0) {
+                errorMessage = Constants.DELETE_NOTE_ERROR;
+            }
+        }
         model.addAttribute("noteList", notesService.getNotesForUser(currentUserId));
-        model.addAttribute("success", true);
+        model.addAttribute("success", errorMessage == null);
+        model.addAttribute("message", errorMessage);
         return "result";
     }
 }

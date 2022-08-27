@@ -19,8 +19,12 @@ public class NotesService {
         return notesMapper.insertNote(note);
     }
 
-    public void deleteNote(Integer currentUserId, Integer noteId) {
-        notesMapper.deleteNote(currentUserId, noteId);
+    public Note getNote(Integer currentUserId, Integer noteId) {
+        return notesMapper.getNote(currentUserId, noteId);
+    }
+
+    public int deleteNote(Integer currentUserId, Integer noteId) {
+        return notesMapper.deleteNote(currentUserId, noteId);
     }
 
     public int updateNote(Note note) {

@@ -24,8 +24,8 @@ public class CredentialsService {
         return credentialMapper.insertCredential(credential);
     }
 
-    public void deleteCredential(Integer currentUserId, Integer noteId) {
-        credentialMapper.deleteCredential(currentUserId, noteId);
+    public int deleteCredential(Integer currentUserId, Integer noteId) {
+        return credentialMapper.deleteCredential(currentUserId, noteId);
     }
 
     public int updateCredential(Credential credential) {
@@ -38,5 +38,9 @@ public class CredentialsService {
 
     public List<Credential> getCredentialsListForUser(Integer userId) {
         return credentialMapper.getCredentialsListForUser(userId);
+    }
+
+    public Credential getCredential(Integer currentUserId, Integer credentialId) {
+        return credentialMapper.getCredential(credentialId);
     }
 }

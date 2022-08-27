@@ -297,6 +297,7 @@ class CloudStorageApplicationTests {
 
     @Test
     public void testCreateNote() {
+        // signup/login
         doMockSignUp("CreateNoteFirst", "CreateNoteLast", "CreateNote", "1234");
         doLogIn("CreateNote", "1234");
 
@@ -317,10 +318,11 @@ class CloudStorageApplicationTests {
 
     @Test
     public void testEditNote() {
-        // create new note first
+        // signup/login
         doMockSignUp("EditNoteFirst", "EditNoteLast", "EditNote", "1234");
         doLogIn("EditNote", "1234");
 
+        // create new note first
         NotePage notePage = new NotePage(driver);
         String noteTitle = "CreateNote";
         String noteDescription = "Note Description 1";
@@ -344,10 +346,11 @@ class CloudStorageApplicationTests {
 
     @Test
     public void testDeleteNote() {
-        // create new note first
+        // signup/login
         doMockSignUp("DeleteNoteFirst", "DeleteNoteLast", "DeleteNote", "1234");
         doLogIn("DeleteNote", "1234");
 
+        // create new note first
         NotePage notePage = new NotePage(driver);
         String noteTitle = "CreateNote";
         String noteDescription = "Note Description 1";
@@ -362,6 +365,7 @@ class CloudStorageApplicationTests {
 
         Assertions.assertEquals("Home", driver.getTitle());
         notePage.navigateToNotesTab();
+        Assertions.assertTrue(notePage.isNoteTableEmpty());
         Assertions.assertThrows(NoSuchElementException.class, notePage::getFirstNoteTitleText);
     }
 
@@ -424,8 +428,8 @@ class CloudStorageApplicationTests {
         driver.findElement(By.id("success-redirect-link")).click();
         credentialPage.navigateToCredentialsTab();
 
-        CredentialTestInfo visibleCredential = credentialPage.getVisibleCredentials().get(0); // get the updated credential
         // verify that updated changes are present
+        CredentialTestInfo visibleCredential = credentialPage.getVisibleCredentials().get(0); // get the updated credential
         Assertions.assertEquals(updatedCredential.getUrl(), visibleCredential.getUrl());
         Assertions.assertEquals(updatedCredential.getUsername(), visibleCredential.getUsername());
         Assertions.assertNotEquals(updatedCredential.getPassword(), visibleCredential.getPassword());

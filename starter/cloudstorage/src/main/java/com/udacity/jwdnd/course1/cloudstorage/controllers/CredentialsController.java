@@ -24,14 +24,6 @@ public class CredentialsController {
         this.encryptionService = encryptionService;
     }
 
-    @GetMapping
-    public String getCredentials(Authentication authentication, Model model) {
-        Integer currentUserId = userService.getCurrentUser(authentication);
-        model.addAttribute("credentialList", credentialsService.getCredentialsListForUser(currentUserId));
-        model.addAttribute("encryptionService", encryptionService);
-        return "home";
-    }
-
     @PostMapping()
     public String addOrUpdateCredential(Credential credential, Authentication authentication, Model model) {
         System.out.println("credential: " + credential);
@@ -63,10 +55,19 @@ public class CredentialsController {
     @GetMapping("/delete")
     public String deleteCredential(@RequestParam(name = "credentialId") Integer credentialId, Authentication authentication, Model model) {
         Integer currentUserId = userService.getCurrentUser(authentication);
-        credentialsService.deleteCredential(currentUserId, credentialId);
+        String errorMessage = null;
+        if (credentialsService.getCredential(currentUserId, credentialId) == null) {
+            errorMessage = Constants.DELETE_CREDENTIAL_ERROR;
+        } else {
+            int rowsDeleted = credentialsService.deleteCredential(currentUserId, credentialId);
+            if (rowsDeleted < 0) {
+                errorMessage = Constants.DELETE_CREDENTIAL_ERROR;
+            }
+        }
         model.addAttribute("credentialList", credentialsService.getCredentialsListForUser(currentUserId));
         model.addAttribute("encryptionService", encryptionService);
-        model.addAttribute("success", true);
+        model.addAttribute("success", errorMessage == null);
+        model.addAttribute("message", errorMessage);
         return "result";
     }
 }

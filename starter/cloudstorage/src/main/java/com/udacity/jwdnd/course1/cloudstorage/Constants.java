@@ -9,4 +9,7 @@ public class Constants {
     public static final String FILE_EXISTS_ERROR = "Error: File already exists";
     public static final String ADD_FILE_ERROR = "Error: Unable to add file";
     public static final String ADD_CREDENTIAL_ERROR = "Error: Unable to add credential";
+    public static final String DELETE_NOTE_ERROR = "Error: Unable to delete note";
+    public static final String DELETE_CREDENTIAL_ERROR = "Error: Unable to delete credential";
+    public static final String DELETE_FILE_ERROR = "Error: Unable to delete file";
 }

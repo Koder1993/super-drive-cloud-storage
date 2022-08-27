@@ -7,6 +7,7 @@ import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -18,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping("/files")
@@ -33,21 +32,10 @@ public class FileController {
         this.userService = userService;
     }
 
-    @GetMapping()
-    public String getFiles(Authentication authentication, Model model) {
-        Integer currentUserId = userService.getCurrentUser(authentication);
-        List<File> fileList = new ArrayList<>();
-        if (currentUserId != null) {
-            fileList = fileService.getFiles(currentUserId);
-        }
-        model.addAttribute("fileList", fileList);
-        return "home";
-    }
-
     @PostMapping
     public String uploadFile(@RequestParam("fileUpload") MultipartFile multipartFile, Authentication authentication, Model model) throws IOException {
         String fileName = multipartFile.getOriginalFilename();
-        System.out.println("multipartFile: " + multipartFile + " fileName: " + fileName);
+        //System.out.println("multipartFile: " + multipartFile + " fileName: " + fileName);
         Integer userId = userService.getCurrentUser(authentication);
         String message = null;
         if (fileName == null || fileName.isEmpty()) {
@@ -74,17 +62,31 @@ public class FileController {
     public ResponseEntity<Resource> viewFile(@RequestParam(name = "fileId") Integer fileId, Authentication authentication, Model model) {
         Integer userId = userService.getCurrentUser(authentication);
         File file = fileService.getFileById(userId, fileId);
-        Resource fileResource = new ByteArrayResource(file.getFileData());
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFileName() + "\"").body(fileResource);
+        if (file == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            Resource fileResource = new ByteArrayResource(file.getFileData());
+            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + file.getFileName() + "\"").body(fileResource);
+        }
     }
 
     @GetMapping("/delete")
     public String deleteFile(@RequestParam(name = "fileId") Integer fileId, Authentication authentication, Model model) {
         Integer currentUserId = userService.getCurrentUser(authentication);
+        String errorMessage = null;
+        if (fileService.getFileById(currentUserId, fileId) == null) {
+            errorMessage = Constants.DELETE_FILE_ERROR;
+        } else {
+            int rowsDeleted = fileService.deleteFile(currentUserId, fileId);
+            if (rowsDeleted < 0) {
+                errorMessage = Constants.DELETE_FILE_ERROR;
+            }
+        }
         fileService.deleteFile(currentUserId, fileId);
         model.addAttribute("fileList", fileService.getFiles(currentUserId));
-        model.addAttribute("success", true);
+        model.addAttribute("success", errorMessage == null);
+        model.addAttribute("message", errorMessage);
         return "result";
     }
 }

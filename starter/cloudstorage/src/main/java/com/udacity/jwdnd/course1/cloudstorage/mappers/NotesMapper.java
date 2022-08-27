@@ -26,5 +26,9 @@ public interface NotesMapper {
     List<Note> getNotesForUser(int userId);
 
     @Delete("DELETE FROM NOTES WHERE userid = #{userId} AND noteid = #{noteId}")
-    void deleteNote(int userId, int noteId);
+    int deleteNote(int userId, int noteId);
+
+    @Select("SELECT * FROM NOTES WHERE userid = #{userId} AND noteid = #{noteId}")
+    @ResultMap("notesResultMap")
+    Note getNote(int userId, int noteId);
 }

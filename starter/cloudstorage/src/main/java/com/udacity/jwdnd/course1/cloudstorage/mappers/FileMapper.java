@@ -7,6 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface FileMapper {
+
     @Insert("INSERT INTO FILES (filename, contenttype, filesize, userid, filedata) VALUES(#{fileName}, #{contentType}, #{fileSize}, #{userId}, #{fileData})")
     @ResultMap("fileResultMap")
     @Options(useGeneratedKeys = true, keyProperty = "fileId")
@@ -17,7 +18,7 @@ public interface FileMapper {
     List<File> getFilesForUser(int userId);
 
     @Delete("DELETE FROM FILES WHERE userid = #{userId} AND fileid = #{fileId}")
-    void deleteFile(int userId, int fileId);
+    int deleteFile(int userId, int fileId);
 
     @Select("SELECT * FROM FILES WHERE userid = #{userId} AND filename = #{fileName}")
     File getFileByName(Integer userId, String fileName);

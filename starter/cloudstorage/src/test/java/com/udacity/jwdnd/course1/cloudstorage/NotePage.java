@@ -1,9 +1,13 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotePage {
     @FindBy(id = "nav-notes-tab")
@@ -35,6 +39,9 @@ public class NotePage {
 
     @FindBy(id = "note-delete-button")
     private WebElement noteDeleteButton;
+
+    @FindBy(id = "noteTable")
+    private WebElement noteTable;
 
     public NotePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -73,5 +80,9 @@ public class NotePage {
 
     public void navigateToNotesTab() {
         notesTab.click();
+    }
+
+    public boolean isNoteTableEmpty() {
+        return noteTable.findElements(By.id("note-title-main")).isEmpty();
     }
 }
