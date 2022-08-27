@@ -1,11 +1,11 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
-public class CredentialTestInfo {
+public class CredentialTestData {
     private String url;
     private String username;
     private String password;
 
-    public CredentialTestInfo(String url, String username, String password) {
+    public CredentialTestData(String url, String username, String password) {
         this.url = url;
         this.username = username;
         this.password = password;

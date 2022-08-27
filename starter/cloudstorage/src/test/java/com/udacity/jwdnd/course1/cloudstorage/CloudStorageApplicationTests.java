@@ -301,11 +301,13 @@ class CloudStorageApplicationTests {
         doMockSignUp("CreateNoteFirst", "CreateNoteLast", "CreateNote", "1234");
         doLogIn("CreateNote", "1234");
 
+        // create new note
         NotePage notePage = new NotePage(driver);
         String noteTitle = "CreateNote";
         String noteDescription = "Hello World!!";
         notePage.createNote(noteTitle, noteDescription);
 
+        // verify that result screen is displayed with proper message
         Assertions.assertEquals("Result", driver.getTitle());
         Assertions.assertEquals("Success", driver.findElement(By.id("success")).getText());
         driver.findElement(By.id("success-redirect-link")).click();
@@ -371,33 +373,37 @@ class CloudStorageApplicationTests {
 
     // TCs for credentials management
 
-    private List<CredentialTestInfo> generateUserCredentialList() {
-        List<CredentialTestInfo> credentialList = new ArrayList<>();
-        credentialList.add(new CredentialTestInfo("http://test1.com", "Test1", "1234"));
-        credentialList.add(new CredentialTestInfo("http://test2.com", "Test2", "2345"));
-        credentialList.add(new CredentialTestInfo("http://test3.com", "Test3", "3456"));
+    private List<CredentialTestData> generateCredentialTestList() {
+        List<CredentialTestData> credentialList = new ArrayList<>();
+        credentialList.add(new CredentialTestData("http://test1.com", "Test1", "1234"));
+        credentialList.add(new CredentialTestData("http://test2.com", "Test2", "2345"));
+        credentialList.add(new CredentialTestData("http://test3.com", "Test3", "3456"));
         return credentialList;
     }
 
     @Test
     public void testCreateCredentials() {
+        // signup/login
         doMockSignUp("CreateCredential", "CreateCredential", "CreateCredential", "1234");
         doLogIn("CreateCredential", "1234");
 
+        // generate data for creating credentials
         CredentialPage credentialPage = new CredentialPage(driver);
-        List<CredentialTestInfo> credentialList = generateUserCredentialList();
+        List<CredentialTestData> credentialList = generateCredentialTestList();
 
-        for (CredentialTestInfo credentialTestInfo : credentialList) {
+        for (CredentialTestData credentialTestInfo : credentialList) {
             credentialPage.createCredential(credentialTestInfo);
             Assertions.assertEquals("Result", driver.getTitle());
             driver.findElement(By.id("success-redirect-link")).click();
         }
         credentialPage.navigateToCredentialsTab();
 
-        List<CredentialTestInfo> visibleCredentials = credentialPage.getVisibleCredentials();
+        // get visible credentials on page
+        List<CredentialTestData> visibleCredentials = credentialPage.getVisibleCredentials();
+        // verifies if data is correct
         for (int i = 0; i < credentialList.size(); i++) {
-            CredentialTestInfo credential = credentialList.get(i);
-            CredentialTestInfo visibleCredential = visibleCredentials.get(i);
+            CredentialTestData credential = credentialList.get(i);
+            CredentialTestData visibleCredential = visibleCredentials.get(i);
             Assertions.assertEquals(credential.getUrl(), visibleCredential.getUrl());
             Assertions.assertEquals(credential.getUsername(), visibleCredential.getUsername());
             Assertions.assertNotEquals(credential.getPassword(), visibleCredential.getPassword()); // verifies that displayed password is encrypted
@@ -406,13 +412,15 @@ class CloudStorageApplicationTests {
 
     @Test
     public void testEditCredentials() throws InterruptedException {
+        // signup/login
         doMockSignUp("EditCredential", "EditCredential", "EditCredential", "1234");
         doLogIn("EditCredential", "1234");
 
+        // generate data for creating credentials
         CredentialPage credentialPage = new CredentialPage(driver);
-        List<CredentialTestInfo> credentialList = generateUserCredentialList();
+        List<CredentialTestData> credentialList = generateCredentialTestList();
 
-        for (CredentialTestInfo credentialTestInfo : credentialList) {
+        for (CredentialTestData credentialTestInfo : credentialList) {
             credentialPage.createCredential(credentialTestInfo);
             Assertions.assertEquals("Result", driver.getTitle());
             driver.findElement(By.id("success-redirect-link")).click();
@@ -422,14 +430,15 @@ class CloudStorageApplicationTests {
         Thread.sleep(2000L);
         Assertions.assertEquals(credentialList.get(0).getPassword(), credentialPage.getPasswordInDialog()); // verify that dialog password is decrypted
 
-        CredentialTestInfo updatedCredential = new CredentialTestInfo("http://test10.com", "Test10", "4567");
+        // update credential with new data
+        CredentialTestData updatedCredential = new CredentialTestData("http://test10.com", "Test10", "4567");
         credentialPage.editCredential(updatedCredential);
         Assertions.assertEquals("Result", driver.getTitle());
         driver.findElement(By.id("success-redirect-link")).click();
         credentialPage.navigateToCredentialsTab();
 
         // verify that updated changes are present
-        CredentialTestInfo visibleCredential = credentialPage.getVisibleCredentials().get(0); // get the updated credential
+        CredentialTestData visibleCredential = credentialPage.getVisibleCredentials().get(0); // get the updated credential
         Assertions.assertEquals(updatedCredential.getUrl(), visibleCredential.getUrl());
         Assertions.assertEquals(updatedCredential.getUsername(), visibleCredential.getUsername());
         Assertions.assertNotEquals(updatedCredential.getPassword(), visibleCredential.getPassword());
@@ -437,19 +446,22 @@ class CloudStorageApplicationTests {
 
     @Test
     public void testDeleteCredentials() throws InterruptedException {
+        // signup/login
         doMockSignUp("DeleteCredential", "DeleteCredential", "DeleteCredential", "1234");
         doLogIn("DeleteCredential", "1234");
 
+        // generate data for creating credentials
         CredentialPage credentialPage = new CredentialPage(driver);
-        List<CredentialTestInfo> credentialList = generateUserCredentialList();
+        List<CredentialTestData> credentialList = generateCredentialTestList();
 
-        for (CredentialTestInfo credentialTestInfo : credentialList) {
+        for (CredentialTestData credentialTestInfo : credentialList) {
             credentialPage.createCredential(credentialTestInfo);
             Assertions.assertEquals("Result", driver.getTitle());
             driver.findElement(By.id("success-redirect-link")).click();
         }
         credentialPage.navigateToCredentialsTab();
 
+        // delete all credentials on page
         for (int i = 0; i < credentialList.size(); i++) {
             credentialPage.deleteCredential();
             driver.findElement(By.id("success-redirect-link")).click();

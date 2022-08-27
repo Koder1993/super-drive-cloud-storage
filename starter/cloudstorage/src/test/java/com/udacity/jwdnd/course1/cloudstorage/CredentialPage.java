@@ -45,7 +45,7 @@ public class CredentialPage {
         PageFactory.initElements(webDriver, this);
     }
 
-    public void createCredential(CredentialTestInfo credentialTest) {
+    public void createCredential(CredentialTestData credentialTest) {
         credentialsTab.click();
         addCredentialButton.click();
         credentialUrlTextInDialog.sendKeys(credentialTest.getUrl());
@@ -54,7 +54,11 @@ public class CredentialPage {
         credentialSaveButton.click();
     }
 
-    public void editCredential(CredentialTestInfo credentialTest) {
+    public void navigateToCredentialsTab() {
+        credentialsTab.click();
+    }
+
+    public void editCredential(CredentialTestData credentialTest) {
         credentialUrlTextInDialog.clear();
         credentialUrlTextInDialog.sendKeys(credentialTest.getUrl());
         credentialUsernameTextInDialog.clear();
@@ -64,23 +68,20 @@ public class CredentialPage {
         credentialSaveButton.click();
     }
 
-    public void navigateToCredentialsTab() {
-        credentialsTab.click();
-    }
-
-    public List<CredentialTestInfo> getVisibleCredentials() {
-        List<CredentialTestInfo> credentialTestInfoList = new ArrayList<>();
+    public List<CredentialTestData> getVisibleCredentials() {
+        List<CredentialTestData> credentialTestInfoList = new ArrayList<>();
+        // get list of visible credential items from table
         List<WebElement> urlList = credentialTable.findElements(By.id("credential-url-text"));
         List<WebElement> usernameList = credentialTable.findElements(By.id("credential-username-text"));
         List<WebElement> passwordList = credentialTable.findElements(By.id("credential-password-text"));
+        // add new credential data items based on visible credentials
         for (int i = 0; i < urlList.size(); i++) {
-            credentialTestInfoList.add(new CredentialTestInfo(urlList.get(i).getText(), usernameList.get(i).getText(), passwordList.get(i).getText()));
+            credentialTestInfoList.add(new CredentialTestData(urlList.get(i).getText(), usernameList.get(i).getText(), passwordList.get(i).getText()));
         }
         return credentialTestInfoList;
     }
 
     public void selectEditButtonForElement(int index) {
-//        credentialEditButton.click();
         List<WebElement> editButtons = credentialTable.findElements(By.id("credential-edit-button"));
         editButtons.get(index).click();
     }
