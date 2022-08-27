@@ -209,6 +209,68 @@ class CloudStorageApplicationTests {
         Assertions.assertNotEquals("Home", driver.getTitle());
     }
 
+	@Test
+	public void testLoginError() {
+		driver.get("http://localhost:" + this.port + "/login");
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
+		WebElement loginUserName = driver.findElement(By.id("inputUsername"));
+		loginUserName.click();
+		loginUserName.sendKeys("TestLogin");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
+		WebElement loginPassword = driver.findElement(By.id("inputPassword"));
+		loginPassword.click();
+		loginPassword.sendKeys("TestPassword");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login-button")));
+		WebElement loginButton = driver.findElement(By.id("login-button"));
+		loginButton.click();
+
+		WebElement errorMessage = driver.findElement(By.id("error-msg"));
+		Assertions.assertEquals("Invalid username or password", errorMessage.getText());
+	}
+
+	@Test
+	public void testSignupError() {
+        // sign-up with username "ABCD"
+		doMockSignUp("Hello", "World", "ABCD", "1234");
+
+        // try to sign-up with same username
+        WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+        driver.get("http://localhost:" + this.port + "/signup");
+        webDriverWait.until(ExpectedConditions.titleContains("Sign Up"));
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputFirstName")));
+        WebElement inputFirstName = driver.findElement(By.id("inputFirstName"));
+        inputFirstName.click();
+        inputFirstName.sendKeys("Hello2");
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputLastName")));
+        WebElement inputLastName = driver.findElement(By.id("inputLastName"));
+        inputLastName.click();
+        inputLastName.sendKeys("World2");
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
+        WebElement inputUsername = driver.findElement(By.id("inputUsername"));
+        inputUsername.click();
+        inputUsername.sendKeys("ABCD");
+
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputPassword")));
+        WebElement inputPassword = driver.findElement(By.id("inputPassword"));
+        inputPassword.click();
+        inputPassword.sendKeys("1234456");
+
+        // Attempt to sign up.
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("buttonSignUp")));
+        WebElement buttonSignUp = driver.findElement(By.id("buttonSignUp"));
+        buttonSignUp.click();
+
+        // verify that sign-up fails in case of duplicate username
+		Assertions.assertTrue(driver.findElement(By.id("signup-error-msg")).getText().contains(Constants.SIGNUP_ERROR_USERNAME_EXISTS));
+	}
+
     @Test
     public void testSignupLoginLogoutFlow() {
         // Sign-up flow

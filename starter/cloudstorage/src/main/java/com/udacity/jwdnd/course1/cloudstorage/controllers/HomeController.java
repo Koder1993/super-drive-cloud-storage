@@ -42,7 +42,6 @@ public class HomeController {
             fileList = fileService.getFiles(currentUserId);
             credentialList = credentialsService.getCredentialsListForUser(currentUserId);
         }
-        //System.out.println("credentialList: " + credentialList);
         model.addAttribute("noteList", noteList);
         model.addAttribute("fileList", fileList);
         model.addAttribute("credentialList", credentialList);

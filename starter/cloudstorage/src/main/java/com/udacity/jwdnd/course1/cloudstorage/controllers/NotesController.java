@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controllers;
 
+import com.udacity.jwdnd.course1.cloudstorage.Constants;
 import com.udacity.jwdnd.course1.cloudstorage.entity.Note;
 import com.udacity.jwdnd.course1.cloudstorage.services.NotesService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -50,7 +51,7 @@ public class NotesController {
             rowsAdded = notesService.updateNote(newNote);
         }
         if (rowsAdded < 0) {
-            errorMessage = "Error: Unable to add note";
+            errorMessage = Constants.ADD_NOTE_ERROR;
         }
         model.addAttribute("success", errorMessage == null);
         model.addAttribute("message", errorMessage);

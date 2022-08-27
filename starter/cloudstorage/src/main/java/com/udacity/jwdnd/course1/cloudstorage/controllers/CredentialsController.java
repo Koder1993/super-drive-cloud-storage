@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controllers;
 
+import com.udacity.jwdnd.course1.cloudstorage.Constants;
 import com.udacity.jwdnd.course1.cloudstorage.entity.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialsService;
 import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
@@ -47,7 +48,7 @@ public class CredentialsController {
             rowsAdded = credentialsService.updateCredential(credential);
         }
         if (rowsAdded < 0) {
-            errorMessage = "Error: Unable to add credential";
+            errorMessage = Constants.ADD_CREDENTIAL_ERROR;
         }
 
         model.addAttribute("success", errorMessage == null);

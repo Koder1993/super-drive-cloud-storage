@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controllers;
 
+import com.udacity.jwdnd.course1.cloudstorage.Constants;
 import com.udacity.jwdnd.course1.cloudstorage.entity.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -50,9 +51,9 @@ public class FileController {
         Integer userId = userService.getCurrentUser(authentication);
         String message = null;
         if (fileName == null || fileName.isEmpty()) {
-            message = "Error: Empty file";
+            message = Constants.EMPTY_FILE_ERROR;
         } else if(fileService.isFileExists(userId, fileName)) {
-            message = "Error: File already exists";
+            message = Constants.FILE_EXISTS_ERROR;
         } else {
             File file = new File();
             file.setFileName(fileName);
@@ -61,7 +62,7 @@ public class FileController {
             file.setFileSize(String.valueOf(multipartFile.getSize()));
             file.setContentType(multipartFile.getContentType());
             int rowsAdded = fileService.addFile(file);
-            if (rowsAdded <= 0) message = "Error: Unable to add file";
+            if (rowsAdded <= 0) message = Constants.ADD_FILE_ERROR;
         }
         model.addAttribute("fileList", fileService.getFiles(userId));
         model.addAttribute("success", message == null);
